@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Age Calculator</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#232526"><link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{font-family:'Hind Siliguri','Segoe UI',sans-serif;min-height:100vh;background:linear-gradient(-45deg,#232526,#2c2c2e,#3a3a3c,#232526);background-size:400% 400%;animation:gs 14s ease infinite;overflow-x:hidden;color:#fff}
+@keyframes gs{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+.appbar{background:rgba(255,255,255,.12);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:space-between;padding:16px 18px;position:sticky;top:0;z-index:5}
+.appbar .left{display:flex;align-items:center;gap:16px}.menu-icon{font-size:22px}
+.appbar h1{font-family:'Baloo Da 2',sans-serif;font-size:20px;margin:0;background:linear-gradient(90deg,#fff,#ffd166);-webkit-background-clip:text;background-clip:text;color:transparent}
+.theme-btn{width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#ffd166,#ff9a5c);font-size:17px;box-shadow:0 4px 12px rgba(255,154,92,.5);cursor:pointer;border:none}
+.theme-btn:active{transform:scale(.9)}
+.theme-dots{display:flex;justify-content:center;gap:6px;padding:10px 0 2px}
+.theme-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);transition:.3s}
+.theme-dots span.active{background:#ffd166;width:18px;border-radius:4px}
+.theme-name{text-align:center;font-size:11px;opacity:.75;margin-bottom:6px}
+.page-wrap{display:flex;justify-content:center;padding:12px 15px 30px;position:relative;z-index:2}
+#particles{position:fixed;inset:0;pointer-events:none}
+.particle{position:absolute;bottom:-20px;border-radius:50%;background:rgba(255,255,255,.45);animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-110vh) translateX(20px);opacity:0}}
+.card{background:rgba(255,255,255,.14);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.3);padding:30px 24px 26px;border-radius:26px;box-shadow:0 20px 45px rgba(0,0,0,.35);width:100%;max-width:360px;text-align:center}
+.icon-badge{width:66px;height:66px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(145deg,rgba(255,255,255,.25),rgba(255,255,255,.05));animation:bo 2.4s ease-in-out infinite}
+@keyframes bo{50%{transform:translateY(-7px) rotate(-3deg)}}
+.field-label{font-family:'Baloo Da 2',sans-serif;font-size:14px;font-weight:700;text-align:left;margin:18px 0 8px;text-transform:uppercase;letter-spacing:.8px}
+.date-box{background:rgba(255,255,255,.9);border-radius:14px;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1.5px solid transparent;transition:.25s}
+.date-box:focus-within{border-color:#ffd166;box-shadow:0 0 0 4px rgba(255,209,102,.25)}
+.date-inputs{display:flex;align-items:flex-end;gap:6px;flex:1}
+.date-inputs input{border:none;border-bottom:2px solid #ccc;text-align:center;font-size:15px;font-family:'Baloo Da 2',sans-serif;font-weight:600;padding-bottom:3px;outline:none;color:#222;background:transparent;width:100%;min-width:0}
+.date-inputs input.year{flex:1.2}.date-inputs input:focus{border-bottom-color:#ff9a5c}
+.date-inputs input::placeholder{color:#999;font-size:13px}.date-inputs span{color:#999;margin-bottom:3px}
+.cal-icon{font-size:22px;margin-left:8px;position:relative;cursor:pointer}
+.cal-icon input{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
+.calc-btn{width:100%;padding:15px;margin-top:22px;background:linear-gradient(135deg,#ff6a88,#ff9a5c);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:700;font-family:'Baloo Da 2',sans-serif;cursor:pointer;box-shadow:0 8px 20px rgba(255,106,136,.45);transition:.2s}
+.calc-btn:active{transform:scale(.97)}
+.ring-wrap{position:relative;width:155px;height:155px;margin:22px auto 12px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.18);stroke-width:11}
+.ring-progress{fill:none;stroke:url(#rg);stroke-width:11;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;transition:stroke-dashoffset 1.4s cubic-bezier(.3,.9,.2,1)}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.age-num{font-family:'Baloo Da 2',sans-serif;font-size:32px;font-weight:700;line-height:1.1;background:linear-gradient(90deg,#fff,#ffd166);-webkit-background-clip:text;background-clip:text;color:transparent}
+.age-lbl{font-size:11px;opacity:.85}
+#result{text-align:left;display:none}
+.info-panel{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.info-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13.5px}
+.info-row+.info-row{border-top:1px dashed rgba(255,255,255,.15)}
+.info-row b,.stat-row b{color:#ffd166;font-family:'Baloo Da 2',sans-serif}
+.zodiac-hero{font-family:'Baloo Da 2',sans-serif;font-size:17px;font-weight:700;color:#ffd166;text-align:center}
+.zodiac-note{text-align:center;font-size:10px;opacity:.55;font-style:italic}
+.stat-row{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.1);padding:12px 15px;border-radius:13px;margin-bottom:9px;font-size:14px;border:1px solid rgba(255,255,255,.12)}
+.stat-row .label{display:flex;align-items:center;gap:9px}
+.stat-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.15)}
+.stat-row b{font-size:16px}
+.life-bar-row{flex-direction:column;align-items:stretch}
+.life-bar-top{display:flex;justify-content:space-between;margin-bottom:6px}
+.life-bar-track{background:rgba(255,255,255,.15);border-radius:8px;height:8px;overflow:hidden}
+.life-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#ffd166,#ff6a88);transition:width 1.2s ease}
+.cd{display:flex;gap:6px;margin-top:8px}.cd div{flex:1;background:rgba(0,0,0,.25);border-radius:10px;padding:6px 0;text-align:center;font-size:10px}
+.cd b{display:block;font-size:18px}
+.fact{background:rgba(255,209,102,.12);border:1px dashed rgba(255,209,102,.4);border-radius:12px;padding:10px 12px;margin-bottom:9px;font-size:13px}
+.share-btn{width:100%;padding:13px;margin-top:6px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:14px;font-size:15px;font-weight:600;font-family:'Baloo Da 2',sans-serif;cursor:pointer}
+.error{color:#fff;background:linear-gradient(135deg,#ff5f6d,#ff3b5c);padding:12px;border-radius:12px;display:block;margin-top:15px;font-size:14px}
+.confetti{position:fixed;top:-10px;font-size:20px;animation:fall linear forwards;z-index:6}
+@keyframes fall{to{transform:translateY(105vh) rotate(360deg);opacity:.3}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+.panel-t{font-family:'Baloo Da 2',sans-serif;font-weight:700;color:#ffd166;margin-bottom:4px}
+.mini{display:flex;gap:6px;margin-top:8px}
+.mini input{flex:1;min-width:0;padding:10px;border-radius:10px;border:none;font-family:inherit;font-size:14px}
+.mini button,.pbtn{padding:8px 12px;border:none;border-radius:10px;background:linear-gradient(135deg,#ff6a88,#ff9a5c);color:#fff;font-family:inherit;font-weight:600;cursor:pointer}
+.pbtn{padding:5px 9px;font-size:12px;margin-left:4px;background:rgba(255,255,255,.2)}
+.ppl-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:13px;border-top:1px dashed rgba(255,255,255,.15)}
+.hint{font-size:12px;opacity:.7;margin-top:6px}
+body.light{background:#f3efe9!important;color:#2a2a2a}
+body.light .appbar,body.light .card,body.light .info-panel,body.light .stat-row{background:rgba(255,255,255,.75);border-color:rgba(0,0,0,.1)}
+body.light .info-row b,body.light .stat-row b,body.light .zodiac-hero,body.light .panel-t{color:#b35a00}
+body.light .age-num,body.light .appbar h1{background:linear-gradient(90deg,#333,#b35a00);-webkit-background-clip:text;background-clip:text}
+body.light .cd div{background:rgba(0,0,0,.08)}body.light .share-btn{color:#333;border-color:rgba(0,0,0,.25)}
+.menu-icon{cursor:pointer;padding:4px 6px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.3s;z-index:20}
+.ov.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:78%;max-width:320px;background:rgba(36,36,38,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transform:translateX(-100%);transition:transform .3s cubic-bezier(.3,.9,.3,1);z-index:21;overflow-y:auto;padding-bottom:20px;box-shadow:6px 0 30px rgba(0,0,0,.5)}
+.drawer.on{transform:none}
+.dr-head{padding:34px 20px 20px;background:linear-gradient(135deg,#ff6a88,#ff9a5c);font-family:'Baloo Da 2',sans-serif}
+.dr-head b{font-size:22px;display:block}.dr-head small{opacity:.9}
+.dr-item{display:flex;align-items:center;gap:16px;padding:14px 20px;font-size:15px;cursor:pointer;color:#fff;background:none;border:none;width:100%;text-align:left;font-family:inherit}
+.dr-item:active{background:rgba(255,255,255,.12)}
+.dr-item span:first-child{width:26px;text-align:center;font-size:20px}
+.dr-sep{height:1px;background:rgba(255,255,255,.15);margin:6px 0}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(20px);background:#000c;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;opacity:0;transition:.3s;z-index:30;pointer-events:none;max-width:85%;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
+body.light .drawer{background:rgba(250,250,250,.98)}body.light .dr-item{color:#222}body.light .dr-item:active{background:rgba(0,0,0,.08)}
+</style></head><body>
+<div class="appbar"><div class="left"><span class="menu-icon">☰</span><h1>Age Calculator</h1></div><span style="display:flex;gap:8px"><button class="theme-btn" id="modeBtn" style="background:rgba(255,255,255,.25);box-shadow:none">🌙</button><button class="theme-btn" id="themeBtn">🖤</button></span></div>
+<div class="theme-dots" id="themeDots"></div><div class="theme-name" id="themeName"></div>
+<div id="particles"></div>
+<div class="page-wrap"><div class="card">
+<div class="icon-badge">🎂</div>
+<div class="field-label">জন্ম তারিখ</div>
+<div class="date-box"><div class="date-inputs">
+<input type="text" inputmode="numeric" id="bDay" maxlength="2" placeholder="দিন"><span>/</span>
+<input type="text" inputmode="numeric" id="bMonth" maxlength="2" placeholder="মাস"><span>/</span>
+<input type="text" inputmode="numeric" id="bYear" maxlength="4" placeholder="বছর"></div>
+<span class="cal-icon">📅<input type="date" id="bPick"></span></div>
+<div class="field-label">আজকের তারিখ</div>
+<div class="date-box"><div class="date-inputs">
+<input type="text" inputmode="numeric" id="tDay" maxlength="2" placeholder="দিন"><span>/</span>
+<input type="text" inputmode="numeric" id="tMonth" maxlength="2" placeholder="মাস"><span>/</span>
+<input type="text" inputmode="numeric" id="tYear" maxlength="4" placeholder="বছর"></div>
+<span class="cal-icon">📅<input type="date" id="tPick"></span></div>
+<button class="calc-btn" id="calcBtn">✨ বয়স বের করুন</button>
+<div id="result"></div>
+</div></div>
+<div class="ov" id="ov"></div>
+<div class="drawer" id="drawer">
+<div class="dr-head"><b>🎂 Age Calculator</b><small>সংস্করণ ১.০</small></div>
+<button class="dr-item" id="mLight"><span>🌙</span><span>Light / Dark মোড</span></button>
+<button class="dr-item" id="mTheme"><span>🎨</span><span>থিম বদলান</span></button>
+<button class="dr-item" id="mLang"><span>🌐</span><span>ভাষা পরিবর্তন</span></button>
+<div class="dr-sep"></div>
+<button class="dr-item" id="mShare"><span>📤</span><span>অ্যাপ শেয়ার করুন</span></button>
+<button class="dr-item" id="mRate"><span>⭐</span><span>রেটিং দিন</span></button>
+<div class="dr-sep"></div>
+<button class="dr-item" id="mPriv"><span>🛡️</span><span>প্রাইভেসি পলিসি</span></button>
+<button class="dr-item" id="mTerms"><span>📄</span><span>শর্তাবলি</span></button>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var $=function(i){return document.getElementById(i)};
+var bnD=['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+function toBn(n){var s=String(n);return lang==='en'?s:s.replace(/\d/g,function(d){return bnD[d]})}
+function fmt(n){return toBn(Number(n).toLocaleString('en-US'))}
+function enNum(s){return parseInt(String(s).replace(/[০-৯]/g,function(c){return bnD.indexOf(c)}),10)}
+// আজকের তারিখ অটো
+function setToday(){var d=new Date();$('tDay').value=String(d.getDate()).padStart(2,'0');$('tMonth').value=String(d.getMonth()+1).padStart(2,'0');$('tYear').value=d.getFullYear()}
+setToday();
+// ক্যালেন্ডার পিকার
+function link(pid,a,b,c){$(pid).addEventListener('change',function(){var p=this.value.split('-');if(p.length==3){$(a).value=p[2];$(b).value=p[1];$(c).value=p[0]}})}
+link('bPick','bDay','bMonth','bYear');link('tPick','tDay','tMonth','tYear');
+// থিম
+var themes=[["Royal Blue",["#1e3c72","#2a5298","#1e3c72","#2a5298"],"🎨"],["Deep Teal",["#0f2027","#203a43","#2c5364","#0f2027"],"🌊"],["Wine",["#3a1c71","#d76d77","#ffaf7b","#3a1c71"],"🍷"],["Emerald",["#0b3d2e","#136a5a","#1f8a70","#0b3d2e"],"💎"],["Graphite",["#232526","#2c2c2e","#3a3a3c","#232526"],"🖤"],["Plum",["#4b134f","#c94b4b","#4b134f","#c94b4b"],"🍇"],["Slate Navy",["#22283b","#2d3250","#424769","#22283b"],"🌙"],["Copper",["#603813","#b29f94","#603813","#8a5a2b"],"🔶"],["Ink Purple",["#2b1055","#7597de","#2b1055","#7597de"],"🌌"],["Charcoal Rose",["#141e30","#243b55","#141e30","#243b55"],"🖋️"]];
+var ti=4;
+for(var k=0;k<themes.length;k++)$('themeDots').appendChild(document.createElement('span'));
+function applyTheme(i){var t=themes[i];document.body.style.background="linear-gradient(-45deg,"+t[1].join(",")+")";document.body.style.backgroundSize="400% 400%";$('themeBtn').textContent=t[2];$('themeName').textContent=t[0];var ds=document.querySelectorAll('.theme-dots span');for(var d=0;d<ds.length;d++)ds[d].className=d===i?'active':''}
+$('themeBtn').onclick=function(){ti=(ti+1)%themes.length;applyTheme(ti)};applyTheme(ti);
+// পার্টিকেল
+for(var i=0;i<25;i++){var p=document.createElement('div');p.className='particle';var s=3+Math.random()*6;p.style.cssText='width:'+s+'px;height:'+s+'px;left:'+Math.random()*100+'vw;animation-duration:'+(6+Math.random()*10)+'s;animation-delay:'+Math.random()*8+'s';$('particles').appendChild(p)}
+// অটো-জাম্প
+[['bDay','bMonth'],['bMonth','bYear'],['tDay','tMonth'],['tMonth','tYear']].forEach(function(x){$(x[0]).addEventListener('input',function(){if(this.value.length>=2)$(x[1]).focus()})});
+// রাশি, বার, বাংলা তারিখ, নক্ষত্র
+function getZodiac(d,m){var s=[[20,"♑ মকর"],[19,"♒ কুম্ভ"],[21,"♓ মীন"],[20,"♈ মেষ"],[21,"♉ বৃষ"],[21,"♊ মিথুন"],[23,"♋ কর্কট"],[23,"♌ সিংহ"],[23,"♍ কন্যা"],[23,"♎ তুলা"],[22,"♏ বৃশ্চিক"],[22,"♐ ধনু"],[31,"♑ মকর"]];return d<=s[m][0]?s[m][1]:s[m+1][1]}
+var wk=["রবিবার","সোমবার","মঙ্গলবার","বুধবার","বৃহস্পতিবার","শুক্রবার","শনিবার"];
+var bm=["বৈশাখ","জ্যৈষ্ঠ","আষাঢ়","শ্রাবণ","ভাদ্র","আশ্বিন","কার্তিক","অগ্রহায়ণ","পৌষ","মাঘ","ফাল্গুন","চৈত্র"];
+function leap(y){return(y%4==0&&y%100!=0)||y%400==0}
+function toBengali(date){var g=date.getFullYear(),ny=new Date(g,3,14),by,ref,cy;if(date>=ny){by=g-593;ref=ny;cy=g+1}else{by=g-594;ref=new Date(g-1,3,14);cy=g}
+var diff=Math.floor((date-ref)/864e5),ml=[31,31,31,31,31,30,30,30,30,30,30,leap(cy)?31:30],m=0,r=diff;while(r>=ml[m]){r-=ml[m];m++}return{day:r+1,month:bm[m],year:by}}
+function jd(date){var Y=date.getFullYear(),M=date.getMonth()+1,D=date.getDate();if(M<=2){Y--;M+=12}var A=Math.floor(Y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(Y+4716))+Math.floor(30.6001*(M+1))+D+B-1524.5}
+function rad(d){return d*Math.PI/180}
+function moonLon(date){var T=(jd(date)-2451545)/36525,L=(218.3164477+481267.88123421*T)%360,D=(297.8501921+445267.1114034*T)%360,M=(357.5291092+35999.0502909*T)%360,Mp=(134.9633964+477198.8675055*T)%360,F=(93.272095+483202.0175233*T)%360;
+var c=6.2886*Math.sin(rad(Mp))+1.274*Math.sin(rad(2*D-Mp))+.6583*Math.sin(rad(2*D))+.2136*Math.sin(rad(2*Mp))-.1851*Math.sin(rad(M))-.1143*Math.sin(rad(2*F))+.0588*Math.sin(rad(2*D-2*Mp))-.0572*Math.sin(rad(2*D-M-Mp))+.0533*Math.sin(rad(2*D+Mp));var l=(L+c)%360;return l<0?l+360:l}
+var nk=["অশ্বিনী","ভরণী","কৃত্তিকা","রোহিণী","মৃগশিরা","আর্দ্রা","পুনর্বসু","পুষ্যা","অশ্লেষা","মঘা","পূর্বফাল্গুনী","উত্তরফাল্গুনী","হস্তা","চিত্রা","স্বাতী","বিশাখা","অনুরাধা","জ্যেষ্ঠা","মূলা","পূর্বাষাঢ়া","উত্তরাষাঢ়া","শ্রবণা","ধনিষ্ঠা","শতভিষা","পূর্বভাদ্রপদ","উত্তরভাদ্রপদ","রেবতী"];
+function getGen(y){return y>=2013?"Generation Alpha":y>=1997?"Generation Z":y>=1981?"Millennial":y>=1965?"Generation X":y>=1946?"Baby Boomer":"Silent Generation"}
+// বৈধ তারিখ যাচাই
+function mk(y,m,d){var x=new Date(y,m-1,d);return(x.getFullYear()==y&&x.getMonth()==m-1&&x.getDate()==d)?x:null}
+function err(m){var r=$('result');r.style.display='block';r.innerHTML="<span class='error'>⚠️ "+tr(m)+"</span>"}
+// count-up
+function countUp(el){var t=+el.dataset.c,suf=el.dataset.s||'',st=null;function f(ts){if(!st)st=ts;var q=Math.min(1,(ts-st)/1200),v=Math.round(t*(1-Math.pow(1-q,3)));el.textContent=fmt(v)+suf;if(q<1)requestAnimationFrame(f)}requestAnimationFrame(f)}
+function confetti(){var e=['🎉','🎊','✨','🎈','🎂'];for(var i=0;i<40;i++){var c=document.createElement('div');c.className='confetti';c.textContent=e[i%5];c.style.left=Math.random()*100+'vw';c.style.animationDuration=(2+Math.random()*3)+'s';document.body.appendChild(c);setTimeout(function(x){x.remove()}.bind(null,c),5500)}}
+var cdTimer=null,shareText='';
+function stat(ic,l,v,extra){return "<div class='stat-row'><span class='label'><span class='stat-icon'>"+ic+"</span>"+l+"</span><b "+(extra||'')+">"+v+"</b></div>"}
+function calculateAge(){
+var day=enNum($('bDay').value),month=enNum($('bMonth').value),year=enNum($('bYear').value);
+if(!day||!month||!year||String($('bYear').value).length<4)return err("জন্ম তারিখ পুরোটা দিন (দিন, মাস, ৪ অংকের বছর)");
+var dob=mk(year,month,day);if(!dob)return err("এই তারিখটি ক্যালেন্ডারে নেই, যেমন ৩১ ফেব্রুয়ারি। তারিখ ঠিক করুন");
+var tD=enNum($('tDay').value),tM=enNum($('tMonth').value),tY=enNum($('tYear').value);
+var today=(tD&&tM&&tY)?mk(tY,tM,tD):new Date(new Date().setHours(0,0,0,0));
+if(!today)return err("আজকের তারিখ সঠিক নয়");
+if(dob>today)return err("জন্ম তারিখ আজকের তারিখের পরে হতে পারবে না");
+var y=today.getFullYear()-dob.getFullYear(),m=today.getMonth()-dob.getMonth(),d=today.getDate()-dob.getDate();
+if(d<0){m--;d+=new Date(today.getFullYear(),today.getMonth(),0).getDate()}if(m<0){y--;m+=12}
+var ms=today-dob,days=Math.round(ms/864e5),weeks=Math.floor(days/7),hours=days*24,beats=days*24*60*75;
+var nb=new Date(today.getFullYear(),dob.getMonth(),dob.getDate());if(nb<today)nb.setFullYear(today.getFullYear()+1);
+var toNb=Math.round((nb-today)/864e5),isB=toNb===0;
+var totalM=y*12+m,big=y>0?y:m,bigL=y>0?'বছর বয়স':'মাস বয়স';
+var life=Math.min(100,(y+m/12)/75*100),bn=toBengali(dob);
+var moon=Math.floor(days/27.32),sleep=Math.floor(days*8/24);
+var facts=["🌙 আপনার জন্মের পর চাঁদ পৃথিবীকে প্রায় "+fmt(moon)+" বার প্রদক্ষিণ করেছে","😴 এখন পর্যন্ত আপনি প্রায় "+fmt(sleep)+" দিন ঘুমিয়ে কাটিয়েছেন","🌬️ আপনি প্রায় "+fmt(days*24*60*16)+" বার নিঃশ্বাস নিয়েছেন","🌍 পৃথিবী সূর্যকে "+toBn(y>0?y:0)+" বার পূর্ণ প্রদক্ষিণ করে ফেলেছে আপনার সাথে"];
+var ageTxt=toBn(y)+" বছর "+toBn(m)+" মাস "+toBn(d)+" দিন";
+shareText="🎂 আমার বয়স "+ageTxt+"\n📅 মোট "+fmt(days)+" দিন\n✨ রাশি: "+getZodiac(dob.getDate(),dob.getMonth())+"\n\nAge Calculator দিয়ে বের করা";
+window.LAST={dob:dob,y:y,m:m,d:d,days:days,zod:getZodiac(dob.getDate(),dob.getMonth())};
+var h="<div class='info-panel'><div class='zodiac-hero'>"+getZodiac(dob.getDate(),dob.getMonth())+" রাশি</div>"
++"<div class='info-row'><span>📆 জন্মবার</span><b>"+wk[dob.getDay()]+"</b></div>"
++"<div class='info-row'><span>🌙 বাংলা তারিখ</span><b>"+toBn(bn.day)+" "+bn.month+" "+toBn(bn.year)+"</b></div>"
++"<div class='info-row'><span>✨ নক্ষত্র</span><b>"+nk[Math.floor(moonLon(dob)/(360/27))%27]+"</b></div>"
++"<div class='info-row'><span>🧬 প্রজন্ম</span><b>"+getGen(year)+"</b></div>"
++"<div class='zodiac-note'>(নক্ষত্র ও বাংলা তারিখ আনুমানিক হিসাব)</div></div>"
++"<div class='ring-wrap'><svg width='155' height='155' viewBox='0 0 160 160'><defs><linearGradient id='rg' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#ffd166'/><stop offset='100%' stop-color='#ff6a88'/></linearGradient></defs><circle class='ring-bg' cx='80' cy='80' r='70'/><circle class='ring-progress' id='ringP' cx='80' cy='80' r='70'/></svg>"
++"<div class='ring-center'><div class='age-num' data-c='"+big+"'>"+toBn(0)+"</div><div class='age-lbl'>"+bigL+"</div></div></div>"
++stat('🎈','নির্দিষ্ট বয়স',ageTxt)
++stat('📅','মোট দিন','','data-c="'+days+'"')
++stat('🗓️','মোট সপ্তাহ','','data-c="'+weeks+'"')
++stat('⏰','মোট ঘণ্টা','','data-c="'+hours+'"')
++stat('❤️','আনুমানিক হৃদস্পন্দন','','data-c="'+beats+'"')
++(isB?"<div class='stat-row'><span class='label'><span class='stat-icon'>🎉</span>আজ আপনার জন্মদিন!</span><b>শুভ জন্মদিন 🎂</b></div>":stat('🎉','পরবর্তী জন্মদিন',toBn(toNb)+" দিন পর")+"<div class='stat-row life-bar-row' style='display:block'><span class='label'>⏳ জন্মদিনে বাকি (লাইভ)</span><div class='cd' id='cd'></div></div>")
++"<div class='stat-row life-bar-row'><div class='life-bar-top'><span class='label'><span class='stat-icon'>⏳</span>গড় আয়ুষ্কালের</span><b>"+toBn(life.toFixed(1))+"%</b></div><div class='life-bar-track'><div class='life-bar-fill' id='lifeF'></div></div></div>"
++"<div class='fact'>"+facts[Math.floor(Math.random()*facts.length)]+"</div>"
++"<button class='share-btn' id='shareBtn'>📤 ফলাফল শেয়ার করুন</button>";
+var r=$('result');r.style.display='block';r.innerHTML=h;
+var cs=r.querySelectorAll('[data-c]');for(var i=0;i<cs.length;i++)countUp(cs[i]);
+setTimeout(function(){$('ringP').style.strokeDashoffset=440-440*Math.min(1,(y>0?y:m/12)/(y>0?100:1)*(y>0?1:1));$('lifeF').style.width=life+'%'},80);
+$('shareBtn').onclick=doShare;addExtras();
+if(isB)confetti();
+clearInterval(cdTimer);
+if(!isB){var real=new Date(),rn=new Date(real.getFullYear(),dob.getMonth(),dob.getDate());if(rn<new Date(real.getFullYear(),real.getMonth(),real.getDate()))rn.setFullYear(real.getFullYear()+1);
+function tick(){var df=Math.max(0,rn-new Date()),D=Math.floor(df/864e5),H=Math.floor(df%864e5/36e5),M=Math.floor(df%36e5/6e4),S=Math.floor(df%6e4/1e3);var e=$('cd');if(e)e.innerHTML=tr([[D,'দিন'],[H,'ঘণ্টা'],[M,'মিনিট'],[S,'সেকেন্ড']].map(function(x){return"<div><b>"+toBn(x[0])+"</b>"+x[1]+"</div>"}).join(''))}
+tick();cdTimer=setInterval(tick,1000)}
+}
+function doShare(){if(navigator.share){navigator.share({text:tr(shareText)}).catch(function(){})}else if(navigator.clipboard){navigator.clipboard.writeText(tr(shareText)).then(function(){$('shareBtn').textContent=tr('✅ কপি হয়েছে')})}else{alert(tr(shareText))}}
+$('calcBtn').onclick=calculateAge;
+// ===== নতুন ফিচার =====
+var LS=function(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}};
+var gm=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+var stones=["গার্নেট","অ্যামেথিস্ট","অ্যাকোয়ামেরিন","হীরা","পান্না","মুক্তা","চুনি","পেরিডট","নীলা","ওপাল","পোখরাজ","ফিরোজা"];
+var cols=["লাল","বেগুনি","আকাশি","সাদা","সবুজ","ক্রিম","গোলাপি","হালকা সবুজ","নীল","কমলা","হলুদ","ফিরোজা"];
+var czo=["বানর","মোরগ","কুকুর","শূকর","ইঁদুর","গরু","বাঘ","খরগোশ","ড্রাগন","সাপ","ঘোড়া","ভেড়া"];
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fd(x){return toBn(x.getDate())+" "+gm[x.getMonth()]+" "+toBn(x.getFullYear())}
+function lucky(n){while(n>9)n=String(n).split('').reduce(function(a,b){return a+ +b},0);return n}
+function ymd(a,b){var y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate()}if(m<0){y--;m+=12}return toBn(y)+" বছর "+toBn(m)+" মাস "+toBn(d)+" দিন"}
+function nextB(dob,from){var n=new Date(from.getFullYear(),dob.getMonth(),dob.getDate());if(n<from)n.setFullYear(n.getFullYear()+1);return n}
+function addExtras(){
+var L=window.LAST,dob=L.dob,days=L.days;if(navigator.vibrate)navigator.vibrate(40);
+LS('dob',[$('bDay').value,$('bMonth').value,$('bYear').value]);
+var ms=[[7000,'১,০০০ সপ্তাহ'],[10000,'১০,০০০ দিন'],[15000,'১৫,০০০ দিন'],[20000,'২০,০০০ দিন']].map(function(a){var x=new Date(dob);x.setDate(x.getDate()+a[0]);
+return"<div class='info-row'><span>🏁 "+a[1]+"</span><b>"+(a[0]<=days?"✅ পূর্ণ":fd(x))+"</b></div>"}).join('');
+var pl=[['☿ বুধ',87.97],['♀ শুক্র',224.7],['♂ মঙ্গল',686.98],['♃ বৃহস্পতি',4332.6]].map(function(p){return"<div class='info-row'><span>"+p[0]+"</span><b>"+toBn((days/p[1]).toFixed(1))+" বছর</b></div>"}).join('');
+var mo=dob.getMonth(),ln=lucky(dob.getDate()+mo+1+dob.getFullYear());
+var h="<div class='info-panel'><div class='panel-t'>🏁 মাইলস্টোন</div>"+ms+"</div>"
++"<div class='info-panel'><div class='panel-t'>🪐 অন্য গ্রহে আপনার বয়স</div>"+pl+"</div>"
++"<div class='info-panel'><div class='panel-t'>🔮 আপনার সম্পর্কে</div>"
++"<div class='info-row'><span>💎 জন্মপাথর</span><b>"+stones[mo]+"</b></div>"
++"<div class='info-row'><span>🎨 শুভ রং</span><b>"+cols[mo]+"</b></div>"
++"<div class='info-row'><span>🐉 চীনা রাশি</span><b>"+czo[dob.getFullYear()%12]+"</b></div>"
++"<div class='info-row'><span>🍀 ভাগ্য সংখ্যা</span><b>"+toBn(ln)+"</b></div>"
++"<div class='zodiac-note'>(মজার জন্য, চীনা রাশি আনুমানিক)</div></div>"
++"<div class='info-panel'><div class='panel-t'>📜 এই দিনের ইতিহাস</div><div id='hist' class='hint'>লোড হচ্ছে...</div></div>"
++"<div class='info-panel'><div class='panel-t'>👨‍👩‍👧 সেভ ও তুলনা</div><div class='mini'><input id='pName' placeholder='নাম লিখুন'><button id='pSave'>💾 সেভ</button></div><div id='ppl'></div><div id='cmp' class='hint'></div></div>"
++"<button class='share-btn' id='cardBtn'>🖼️ শেয়ার কার্ড (ছবি)</button><button class='share-btn' id='icsBtn'>🔔 জন্মদিন ক্যালেন্ডারে যোগ করুন</button>";
+$('shareBtn').insertAdjacentHTML('afterend',h);
+$('pSave').onclick=function(){var n=$('pName').value.trim();if(!n)return;var a=LS('ppl')||[];a.push({n:n,t:dob.getTime()});LS('ppl',a);$('pName').value='';rp()};
+$('cardBtn').onclick=mkCard;$('icsBtn').onclick=mkIcs;
+rp();
+showHist(dob);applyLang();
+}
+function rp(){var a=LS('ppl')||[],L=window.LAST,now=new Date(new Date().setHours(0,0,0,0)),e=$('ppl');if(!e)return;
+e.innerHTML=a.length?a.map(function(p,i){var d=new Date(p.t),n=Math.round((nextB(d,now)-now)/864e5);return"<div class='ppl-row'><span>"+esc(p.n)+"<br><small style='opacity:.7'>"+(n?toBn(n)+" দিন পর জন্মদিন":"🎂 আজ জন্মদিন!")+"</small></span><span><button class='pbtn' data-c='"+i+"'>তুলনা</button><button class='pbtn' data-x='"+i+"'>✕</button></span></div>"}).join(''):"<div class='hint'>এখনও কেউ সেভ নেই। আগে বয়স বের করুন, তারপর নাম লিখে সেভ চাপুন। পরে 'তুলনা' চাপলে আপনার বয়সের সাথে পার্থক্য দেখা যাবে</div>";
+e.onclick=function(ev){var t=ev.target,arr=LS('ppl')||[];if(t.dataset.x!==undefined){arr.splice(+t.dataset.x,1);LS('ppl',arr);rp();$('cmp').textContent=''}
+if(t.dataset.c!==undefined){var p=arr[+t.dataset.c],pd=new Date(p.t),me=L.dob,older=me<pd,a1=older?me:pd,b1=older?pd:me;$('cmp').textContent=lang==='en'?"You are "+tr(ymd(a1,b1))+(older?" older":" younger")+" than "+p.n:(older?"আপনি "+p.n+" এর চেয়ে "+ymd(a1,b1)+" বড়":"আপনি "+p.n+" এর চেয়ে "+ymd(a1,b1)+" ছোট")}}}
+// লাইট/ডার্ক ও মনে রাখা
+$('modeBtn').onclick=function(){var l=document.body.classList.toggle('light');this.textContent=l?'☀️':'🌙';LS('light',l)};
+if(LS('light')){document.body.classList.add('light');$('modeBtn').textContent='☀️'}
+var sti=LS('ti');if(sti!=null){ti=sti;applyTheme(ti)}
+$('themeBtn').addEventListener('click',function(){LS('ti',ti)});
+var sd=LS('dob');if(sd){$('bDay').value=sd[0];$('bMonth').value=sd[1];$('bYear').value=sd[2]}
+// ===== সাইড মেনু =====
+// নিচের লিংকগুলো নিজের লিংক দিয়ে বদলে নিন
+var APP_URL='',RATE_URL='',PRIVACY_URL='',TERMS_URL='';
+var toastT;function toast(m){var t=$('toast');t.textContent=tr(m);t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('on')},2200)}
+function menu(o){$('drawer').classList.toggle('on',o);$('ov').classList.toggle('on',o)}
+document.querySelector('.menu-icon').onclick=function(){menu(true)};
+$('ov').onclick=function(){menu(false)};
+function go(u,msg){menu(false);if(u)window.open(u,'_blank');else toast(msg)}
+$('mLight').onclick=function(){$('modeBtn').click();menu(false)};
+$('mTheme').onclick=function(){$('themeBtn').click();toast('থিম: '+themes[ti][0])};
+
+$('mShare').onclick=function(){menu(false);var u=APP_URL||location.href,t='Age Calculator দিয়ে নিজের বয়স বের করুন 🎂';if(navigator.share)navigator.share({text:t,url:u}).catch(function(){});else if(navigator.clipboard){navigator.clipboard.writeText(t+' '+u);toast('লিংক কপি হয়েছে')}};
+$('mRate').onclick=function(){go(RATE_URL,'কোডে RATE_URL এ Play Store লিংক বসান')};
+$('mPriv').onclick=function(){go(PRIVACY_URL,'কোডে PRIVACY_URL এ লিংক বসান')};
+$('mTerms').onclick=function(){go(TERMS_URL,'কোডে TERMS_URL এ লিংক বসান')};
+// ===== ভাষা (বাংলা / English) =====
+var lang=LS('lang')||'bn',PAIRS=[];
+function zip(a,b){a.forEach(function(x,i){PAIRS.push([x,b[i]])})}
+zip(wk,["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]);
+zip(bm,["Boishakh","Joishtho","Asharh","Shrabon","Bhadro","Ashshin","Kartik","Ogrohayon","Poush","Magh","Falgun","Choitro"]);
+zip(gm,["January","February","March","April","May","June","July","August","September","October","November","December"]);
+zip(nk,["Ashwini","Bharani","Krittika","Rohini","Mrigashira","Ardra","Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati","Vishakha","Anuradha","Jyeshtha","Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada","Revati"]);
+zip(stones,["Garnet","Amethyst","Aquamarine","Diamond","Emerald","Pearl","Ruby","Peridot","Sapphire","Opal","Topaz","Turquoise"]);
+zip(cols,["Red","Purple","Sky blue","White","Green","Cream","Pink","Light green","Blue","Orange","Yellow","Turquoise"]);
+zip(czo,["Monkey","Rooster","Dog","Pig","Rat","Ox","Tiger","Rabbit","Dragon","Snake","Horse","Goat"]);
+zip(["মকর","কুম্ভ","মীন","মেষ","বৃষ","মিথুন","কর্কট","সিংহ","কন্যা","তুলা","বৃশ্চিক","ধনু"],["Capricorn","Aquarius","Pisces","Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius"]);
+[["জন্ম তারিখ","Birthdate"],["আজকের তারিখ","Today's date"],["✨ বয়স বের করুন","✨ Calculate age"],["সংস্করণ","Version"],["Light / Dark মোড","Light / Dark mode"],["থিম বদলান","Change theme"],["ভাষা পরিবর্তন","Language → বাংলা"],["অ্যাপ শেয়ার করুন","Share app"],["রেটিং দিন","Rate us"],["প্রাইভেসি পলিসি","Privacy policy"],["শর্তাবলি","Terms & conditions"],
+[" রাশি"," sign"],["জন্মবার","Birth weekday"],["বাংলা তারিখ","Bengali date"],["নক্ষত্র ও বাংলা তারিখ আনুমানিক হিসাব","Nakshatra and Bengali date are approximate"],["নক্ষত্র","Nakshatra"],["প্রজন্ম","Generation"],["বছর বয়স","years old"],["মাস বয়স","months old"],["নির্দিষ্ট বয়স","Exact age"],["বছর","years"],["মাস","months"],["দিন পর জন্মদিন","days until birthday"],["দিন পর","days to go"],["দিন","days"],
+["মোট দিন","Total days"],["মোট সপ্তাহ","Total weeks"],["মোট ঘণ্টা","Total hours"],["মোট","Total"],["আনুমানিক হৃদস্পন্দন","Est. heartbeats"],["আজ আপনার জন্মদিন!","Today is your birthday!"],["শুভ জন্মদিন","Happy birthday"],["পরবর্তী জন্মদিন","Next birthday"],["জন্মদিনে বাকি (লাইভ)","Time to birthday (live)"],["জন্মদিন","birthday"],["গড় আয়ুষ্কালের","Of average lifespan"],["সপ্তাহ","weeks"],["ঘণ্টা","hours"],["মিনিট","minutes"],["সেকেন্ড","seconds"],["ফলাফল শেয়ার করুন","Share result"],
+["মাইলস্টোন","Milestones"],["✅ পূর্ণ","✅ Done"],["অন্য গ্রহে আপনার বয়স","Your age on other planets"],["বুধ","Mercury"],["শুক্র","Venus"],["মঙ্গল","Mars"],["বৃহস্পতি","Jupiter"],["আপনার সম্পর্কে","About you"],["জন্মপাথর","Birthstone"],["শুভ রং","Lucky color"],["চীনা রাশি","Chinese zodiac"],["ভাগ্য সংখ্যা","Lucky number"],["মজার জন্য, চীনা রাশি আনুমানিক","For fun; Chinese zodiac is approximate"],
+["এই দিনের ইতিহাস","This day in history"],["লোড হচ্ছে...","Loading..."],["এই তারিখের তথ্য অফলাইনে নেই। ইন্টারনেট পেলে দেখা যাবে","No offline entry for this date. Connect to the internet to see one"],["সেভ ও তুলনা","Save & compare"],["💾 সেভ","💾 Save"],["তুলনা","Compare"],["এখনও কেউ সেভ নেই। আগে বয়স বের করুন, তারপর নাম লিখে সেভ চাপুন। পরে 'তুলনা' চাপলে আপনার বয়সের সাথে পার্থক্য দেখা যাবে","No one saved yet. Calculate an age, enter a name and tap Save. Tap Compare later to see the age difference with you"],["🎂 আজ জন্মদিন!","🎂 Birthday today!"],["শেয়ার কার্ড (ছবি)","Share card (image)"],["জন্মদিন ক্যালেন্ডারে যোগ করুন","Add birthday to calendar"],
+["জন্ম তারিখ পুরোটা দিন (দিন, মাস, ৪ অংকের বছর)","Enter the full birthdate (day, month, 4-digit year)"],["এই তারিখটি ক্যালেন্ডারে নেই, যেমন ৩১ ফেব্রুয়ারি। তারিখ ঠিক করুন","This date does not exist on the calendar. Please fix it"],["আজকের তারিখ সঠিক নয়","Today's date is not valid"],["জন্ম তারিখ আজকের তারিখের পরে হতে পারবে না","Birthdate cannot be after today"],
+["আপনার জন্মের পর চাঁদ পৃথিবীকে প্রায় ","Since you were born the Moon has orbited Earth about "],[" বার প্রদক্ষিণ করেছে"," times"],["এখন পর্যন্ত আপনি প্রায় ","So far you have spent about "],[" দিন ঘুমিয়ে কাটিয়েছেন"," days sleeping"],["আপনি প্রায় ","You have taken about "],[" বার নিঃশ্বাস নিয়েছেন"," breaths"],["পৃথিবী সূর্যকে ","Earth has circled the Sun "],[" বার পূর্ণ প্রদক্ষিণ করে ফেলেছে আপনার সাথে"," full times since you were born"],
+["আমার বয়স","My age"],["Age Calculator দিয়ে বের করা","Made with Age Calculator"],["Age Calculator দিয়ে নিজের বয়স বের করুন","Find your age with Age Calculator"],["থিম: ","Theme: "],["ভাষা: বাংলা","Language: English"],["লিংক কপি হয়েছে","Link copied"],["কপি হয়েছে","Copied"],["কোডে RATE_URL এ Play Store লিংক বসান","Add your Play Store link in RATE_URL"],["কোডে PRIVACY_URL এ লিংক বসান","Add your link in PRIVACY_URL"],["কোডে TERMS_URL এ লিংক বসান","Add your link in TERMS_URL"],["নাম লিখুন","Enter name"]].forEach(function(p){PAIRS.push(p)});
+PAIRS.sort(function(a,b){return b[0].length-a[0].length});
+function tr(s){if(lang!=='en')return s;PAIRS.forEach(function(p){s=s.split(p[0]).join(p[1])});return s.replace(/[০-৯]/g,function(c){return bnD.indexOf(c)})}
+var PH={"দিন":"Day","মাস":"Month","বছর":"Year","নাম লিখুন":"Enter name"};
+function applyLang(){var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n;while(n=w.nextNode()){if(n.parentNode.tagName==='SCRIPT'||n.parentNode.tagName==='STYLE')continue;if(n._o===undefined){if(/^\s*$/.test(n.nodeValue))continue;n._o=n.nodeValue}n.nodeValue=tr(n._o)}
+document.querySelectorAll('input[placeholder]').forEach(function(i){if(i._p===undefined)i._p=i.placeholder;i.placeholder=lang==='en'?(PH[i._p]||i._p):i._p});document.documentElement.lang=lang}
+$('mLang').onclick=function(){lang=lang==='en'?'bn':'en';LS('lang',lang);applyLang();var r=$('result');if(r.style.display==='block'&&window.LAST)calculateAge();menu(false);toast('ভাষা: বাংলা')};
+// ===== অফলাইন ইতিহাস =====
+var OFF={"2-21":["১৯৫২: ঢাকায় ভাষা আন্দোলনে সালাম, বরকত, রফিকসহ অনেকে শহীদ হন (আন্তর্জাতিক মাতৃভাষা দিবস)","1952: Language Movement martyrs fell in Dhaka (now International Mother Language Day)"],"3-26":["১৯৭১: বাংলাদেশের স্বাধীনতা ঘোষণা","1971: Bangladesh declared independence"],"12-16":["১৯৭১: বাংলাদেশের বিজয় দিবস","1971: Victory Day of Bangladesh"],"4-17":["১৯৭১: মুজিবনগর সরকার শপথ নেয়","1971: The Mujibnagar government took oath"],"8-15":["১৯৪৭: ভারত স্বাধীনতা লাভ করে","1947: India gained independence"],"8-14":["১৯৪৭: পাকিস্তান স্বাধীনতা লাভ করে","1947: Pakistan gained independence"],"7-20":["১৯৬৯: মানুষ প্রথম চাঁদে পা রাখে (অ্যাপোলো ১১)","1969: Humans first walked on the Moon (Apollo 11)"],"4-12":["১৯৬১: ইউরি গ্যাগারিন প্রথম মহাকাশে যান","1961: Yuri Gagarin became the first human in space"],"11-9":["১৯৮৯: বার্লিন প্রাচীর খুলে দেওয়া হয়","1989: The Berlin Wall opened"],"5-7":["১৮৬১: রবীন্দ্রনাথ ঠাকুরের জন্ম","1861: Rabindranath Tagore was born"],"11-13":["১৯১৩: রবীন্দ্রনাথের নোবেল পুরস্কার প্রাপ্তির খবর ঘোষণা","1913: Tagore's Nobel Prize was announced"],"7-4":["১৭৭৬: যুক্তরাষ্ট্রের স্বাধীনতার ঘোষণা গৃহীত","1776: The US Declaration of Independence was adopted"],"7-14":["১৭৮৯: ফরাসি বিপ্লবে বাস্তিল দুর্গের পতন","1789: The Bastille fell in the French Revolution"],"12-10":["১৯৪৮: জাতিসংঘে মানবাধিকারের সার্বজনীন ঘোষণা গৃহীত","1948: The UN adopted the Universal Declaration of Human Rights"],"10-2":["১৮৬৯: মহাত্মা গান্ধীর জন্ম","1869: Mahatma Gandhi was born"],"3-10":["১৮৭৬: গ্রাহাম বেল প্রথম টেলিফোনে কথা বলেন","1876: Alexander Graham Bell made the first telephone call"],"12-17":["১৯০৩: রাইট ভাইদের প্রথম চালিত বিমান ওড়ে","1903: The Wright brothers made the first powered flight"],"3-14":["১৮৭৯: আলবার্ট আইনস্টাইনের জন্ম","1879: Albert Einstein was born"],"2-12":["১৮০৯: চার্লস ডারউইনের জন্ম","1809: Charles Darwin was born"],"10-24":["১৯৪৫: জাতিসংঘ প্রতিষ্ঠিত হয়","1945: The United Nations was founded"]};
+function showHist(dob){var k=(dob.getMonth()+1)+'-'+dob.getDate(),el=$('hist'),o=OFF[k];
+function put(x){var e=$('hist');if(e)e.textContent=x}
+if(o){put(lang==='en'?o[1]:o[0]);return}
+function show(c){put(lang==='en'?"In "+c.y+": "+c.t:toBn(c.y)+" সালের এই দিনে: "+c.t)}
+var c=LS('h'+k);if(c){show(c);return}
+put(tr('এই তারিখের তথ্য অফলাইনে নেই। ইন্টারনেট পেলে দেখা যাবে'));
+fetch('https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/'+String(dob.getMonth()+1).padStart(2,'0')+'/'+String(dob.getDate()).padStart(2,'0')).then(function(r){return r.json()}).then(function(j){var e=j.events[Math.floor(Math.random()*j.events.length)],c={y:e.year,t:e.text};LS('h'+k,c);show(c)}).catch(function(){})}
+applyLang();
+// ===== শেয়ার কার্ড ও ক্যালেন্ডার (ফোনে নিরাপদ সংস্করণ) =====
+(function(){var st=document.createElement('style');st.textContent=".mdl{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:40;padding:18px}.mdl.on{display:flex}.mdl-in{background:#2b2b2d;color:#fff;border-radius:20px;padding:18px;width:100%;max-width:340px;max-height:92vh;overflow-y:auto;text-align:center}body.light .mdl-in{background:#fff;color:#222}.mdl-in img{width:100%;border-radius:14px;margin-bottom:10px}.mdl-in a,.mdl-in button{display:block;width:100%;margin-top:8px;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#ff6a88,#ff9a5c);color:#fff;font-family:inherit;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer}.mdl-in .g{background:rgba(128,128,128,.3)}.mdl-in p{font-size:13px;opacity:.85;margin:6px 0}";document.head.appendChild(st);
+var m=document.createElement('div');m.className='mdl';m.id='mdl';m.innerHTML="<div class='mdl-in' id='mdlIn'></div>";document.body.appendChild(m);m.onclick=function(e){if(e.target===m)m.classList.remove('on')}})();
+[["ছবিটি চেপে ধরে রাখুন, তারপর 'ছবি সেভ করুন' বেছে নিন","Press and hold the image, then choose 'Save image'"],["📤 শেয়ার","📤 Share"],["⬇️ ডাউনলোড","⬇️ Download"],["বন্ধ করুন","Close"],["পরবর্তী জন্মদিন: ","Next birthday: "],["📅 Google Calendar-এ খুলুন","📅 Open in Google Calendar"],["⬇️ ক্যালেন্ডার ফাইল (.ics)","⬇️ Calendar file (.ics)"],["📋 তারিখ কপি করুন","📋 Copy the date"],["তারিখ কপি হয়েছে","Date copied"],["যেকোনো একটি উপায় বেছে নিন। প্রতি বছর নিজে থেকে যোগ হবে।","Pick any option. It repeats every year."]].forEach(function(p){PAIRS.push(p)});
+PAIRS.sort(function(a,b){return b[0].length-a[0].length});
+function showM(h){$('mdlIn').innerHTML=h+"<button class='g' id='mdlX'>"+tr('বন্ধ করুন')+"</button>";$('mdl').classList.add('on');$('mdlX').onclick=function(){$('mdl').classList.remove('on')}}
+function mkCard(){try{var L=window.LAST,c=document.createElement('canvas');c.width=600;c.height=800;var x=c.getContext('2d'),g=x.createLinearGradient(0,0,600,800);g.addColorStop(0,themes[ti][1][0]);g.addColorStop(1,themes[ti][1][1]);x.fillStyle=g;x.fillRect(0,0,600,800);x.textAlign='center';
+function t(s,y,f,col){x.font=f;x.fillStyle=col;x.fillText(tr(s),300,y)}
+t('🎂',160,'100px sans-serif','#fff');t('আমার বয়স',250,'700 36px "Baloo Da 2",sans-serif','#ffd166');t(toBn(L.y)+' বছর',350,'700 72px "Baloo Da 2",sans-serif','#fff');
+t(toBn(L.m)+' মাস '+toBn(L.d)+' দিন',420,'600 34px "Baloo Da 2",sans-serif','#fff');t('মোট '+fmt(L.days)+' দিন',500,'600 30px "Baloo Da 2",sans-serif','#ffd166');t(L.zod+' রাশি',560,'28px "Baloo Da 2",sans-serif','#fff');t('Age Calculator',740,'22px sans-serif','rgba(255,255,255,.6)');
+var url=c.toDataURL('image/png');
+showM("<img src='"+url+"' alt='card'><p>"+tr("ছবিটি চেপে ধরে রাখুন, তারপর 'ছবি সেভ করুন' বেছে নিন")+"</p><button id='cShare'>"+tr('📤 শেয়ার')+"</button><a href='"+url+"' download='age.png'>"+tr('⬇️ ডাউনলোড')+"</a>");
+$('cShare').onclick=function(){c.toBlob(function(b){try{var f=new File([b],'age.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(function(){});else if(navigator.share)navigator.share({text:tr(shareText)}).catch(function(){});else toast(tr("ছবিটি চেপে ধরে রাখুন, তারপর 'ছবি সেভ করুন' বেছে নিন"))}catch(e){toast(tr("ছবিটি চেপে ধরে রাখুন, তারপর 'ছবি সেভ করুন' বেছে নিন"))}})}}catch(e){toast('Error: '+e.message)}}
+function mkIcs(){try{var d=window.LAST.dob,n=nextB(d,new Date(new Date().setHours(0,0,0,0))),e=new Date(n);e.setDate(e.getDate()+1);
+function f(x){return x.getFullYear()+String(x.getMonth()+1).padStart(2,'0')+String(x.getDate()).padStart(2,'0')}
+var s=f(n),en=f(e),ttl='🎂 '+(lang==='en'?'Birthday':'জন্মদিন');
+var ics="BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:bday"+s+"@agecalc\r\nDTSTAMP:"+s+"T000000Z\r\nDTSTART;VALUE=DATE:"+s+"\r\nDTEND;VALUE=DATE:"+en+"\r\nRRULE:FREQ=YEARLY\r\nSUMMARY:"+ttl+"\r\nEND:VEVENT\r\nEND:VCALENDAR";
+var g="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(ttl)+"&dates="+s+"/"+en+"&recur=RRULE%3AFREQ%3DYEARLY",ds=fd(n);
+showM("<div style='font-size:40px'>🔔</div><p><b>"+tr('পরবর্তী জন্মদিন: ')+ds+"</b></p><p>"+tr('যেকোনো একটি উপায় বেছে নিন। প্রতি বছর নিজে থেকে যোগ হবে।')+"</p><a href='"+g+"' target='_blank' rel='noopener'>"+tr('📅 Google Calendar-এ খুলুন')+"</a><a class='g' href='data:text/calendar;charset=utf-8,"+encodeURIComponent(ics)+"' download='birthday.ics'>"+tr('⬇️ ক্যালেন্ডার ফাইল (.ics)')+"</a><button class='g' id='cCopy'>"+tr('📋 তারিখ কপি করুন')+"</button>");
+$('cCopy').onclick=function(){var t=ttl+' – '+ds;if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){toast('তারিখ কপি হয়েছে')},function(){toast(t)});else toast(t)}}catch(e){toast('Error: '+e.message)}}
+
+// অফলাইন সাপোর্ট
+if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+</script></body></html>
